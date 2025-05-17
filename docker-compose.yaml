@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: give-me-my-weather-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: give_me_my_weather-db
+    ports:
+      - '5432:5432'
+    volumes:
+      - give_me_my_weather-db-data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - db
+
+volumes:
+  give_me_my_weather-db-data:
