@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { WeatherManager } from '@services';
 
 @Injectable()
 export class WeatherService {
-    // MARK: - Current Weather
-    async getCurrentWeather(city: string) {
-      return {
-        temperature: 123,
-        humidity: 46,
-        description: "Some desc for place named as" + city,
-      };
+  // MARK: - Init
+    constructor(
+        private readonly weatherManager: WeatherManager
+    ) { }
+
+  // MARK: - Current Weather
+  async getCurrentWeather(city: string) {
+    return await this.weatherManager.getCurrentWeather(city);
   }
 }

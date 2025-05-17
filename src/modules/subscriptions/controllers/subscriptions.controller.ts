@@ -8,14 +8,18 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 @Controller()
 export class SubscriptionsController {
   // MARK: - Init
-  constructor(private readonly subscriberService: SubscriptionsService) {}
+  constructor(
+    private readonly subscriberService: SubscriptionsService
+  ) { }
 
   // MARK: - POST - Subscribe
   @Post('subscribe')
   @HttpCode(HttpStatus.OK)
   @ApiTags('subscription')
   @UseInterceptors(AnyFilesInterceptor())
-  async subscribe(@Body() newSubscribeDto: NewSubscribeDTO): Promise<void> {
+  async subscribe(
+    @Body() newSubscribeDto: NewSubscribeDTO
+  ): Promise<void> {
     if (!newSubscribeDto) {
       throw new BadRequestException('Invalid input');
     }
@@ -26,7 +30,9 @@ export class SubscriptionsController {
   // MARK: - GET - Confirm
   @Get('confirm/:token')
   @HttpCode(HttpStatus.OK)
-  async confirmSubscription(@Param('token') token: string): Promise<void> {
+  async confirmSubscription(
+    @Param('token') token: string
+  ): Promise<void> {
     if (!token) {
       throw new BadRequestException('Invalid token');
     }
@@ -37,7 +43,9 @@ export class SubscriptionsController {
   // MARK: - GET - Unsubscribe
   @Get('unsubscribe/:token')
   @HttpCode(HttpStatus.OK)
-  async unsubscribe(@Param('token') token: string): Promise<void> {
+  async unsubscribe(
+    @Param('token') token: string
+  ): Promise<void> {
     if (!token) {
       throw new BadRequestException('Invalid token');
     }

@@ -1,32 +1,31 @@
-import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller, Get,
+  HttpCode, HttpStatus,
+  Query,
+} from '@nestjs/common';
 import { WeatherService } from '../services/weather.service';
-import { CurrentWeatherDTO } from '../entities/dtos/current-weather.dto';
+import { CurrentWeather } from '@common/services/weather/entities/domain/current-weather';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('weather')
 @Controller('weather')
 export class WeatherController {
   // MARK: - Init
-  constructor(
-    private readonly weatherService: WeatherService
-  ) { }
+    constructor(
+        private readonly weatherService: WeatherService
+    ) { }
 
   // MARK: - GET - Get Weather
   @Get()
   @HttpCode(HttpStatus.OK)
   async getWeather(
       @Query('city') city: string
-  ): Promise<CurrentWeatherDTO> {
+  ): Promise<CurrentWeather> {
     if (!city) {
-      throw new BadRequestException('City query parameter is required');
+      throw new BadRequestException('Invalid request');
     }
 
-    const currentWeather = await this.weatherService.getCurrentWeather(city);
-    const weatherResult: CurrentWeatherDTO = {
-      temperature: currentWeather.temperature,
-      humidity: currentWeather.humidity,
-      description: currentWeather.description,
-    };
-    return weatherResult;
+    return await this.weatherService.getCurrentWeather(city);
   }
 }

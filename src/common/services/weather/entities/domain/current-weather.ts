@@ -1,6 +1,6 @@
 import { IsString, IsNumber } from 'class-validator';
 
-export class CurrentWeatherDTO {
+export class CurrentWeather {
   @IsNumber()
   temperature: number;
 
