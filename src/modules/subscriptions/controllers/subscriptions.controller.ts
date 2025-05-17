@@ -1,7 +1,7 @@
-import { Body, HttpCode, HttpStatus, Controller, Post, Get, Param, BadRequestException, UseInterceptors } from '@nestjs/common';
+import { Body, HttpCode, HttpStatus, Controller, Post, Get, Param, BadRequestException, UseInterceptors, NotFoundException } from '@nestjs/common';
 import { NewSubscribeDTO } from '../entities/dtos/new-subscripe.dto';
 import { SubscriptionsService } from '../services/subscription.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('subscription')
@@ -14,17 +14,23 @@ export class SubscriptionsController {
 
   // MARK: - POST - Subscribe
   @Post('subscribe')
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription successful. Confirmation email sent',
+  })
   @HttpCode(HttpStatus.OK)
-  @ApiTags('subscription')
   @UseInterceptors(AnyFilesInterceptor())
   async subscribe(
     @Body() newSubscribeDto: NewSubscribeDTO
   ): Promise<void> {
-    if (!newSubscribeDto) {
+    if (
+      !newSubscribeDto ||
+      !['hourly', 'daily'].includes(newSubscribeDto.frequency)
+    ) {
       throw new BadRequestException('Invalid input');
     }
 
-    const result = await this.subscriberService.subscribe(newSubscribeDto);
+    await this.subscriberService.subscribe(newSubscribeDto);
   }
 
   // MARK: - GET - Confirm
@@ -34,10 +40,13 @@ export class SubscriptionsController {
     @Param('token') token: string
   ): Promise<void> {
     if (!token) {
-      throw new BadRequestException('Invalid token');
+      throw new NotFoundException('Token not found');
     }
 
     const result = await this.subscriberService.confirmSubscription(token);
+    if (!result) {
+      throw new BadRequestException('Invalid token');
+    }
   }
 
   // MARK: - GET - Unsubscribe
@@ -47,9 +56,12 @@ export class SubscriptionsController {
     @Param('token') token: string
   ): Promise<void> {
     if (!token) {
-      throw new BadRequestException('Invalid token');
+      throw new NotFoundException('Token not found');
     }
 
     const result = await this.subscriberService.unsubscribe(token);
+    if (!result) {
+      throw new BadRequestException('Invalid token');
+    }
   }
 }

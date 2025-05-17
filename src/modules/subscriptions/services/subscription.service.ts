@@ -1,36 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { NewSubscribeDTO } from '../entities/dtos/new-subscripe.dto';
 import { SubscriptionsRepository } from '../repositories/subscriptions.repository';
-import { Subscription } from '../entities/storage/subscription';
+import { EmailManager, WeatherManager } from '@src/common/services';
 
 @Injectable()
 export class SubscriptionsService {
   // MARK: - Init
   constructor(
-    private readonly repo: SubscriptionsRepository
+    private readonly repo: SubscriptionsRepository,
+    private readonly weatherManager: WeatherManager,
+    private readonly emailManager: EmailManager
   ) { }
 
   // MARK: - Subscribe
-  async subscribe(newSubscribeDTO: NewSubscribeDTO): Promise<boolean> {
-    try {
-      const newSub: Subscription = await this.repo.create({
-        email: newSubscribeDTO.email,
-        city: newSubscribeDTO.city,
-        frequency: newSubscribeDTO.frequency
-      })
-      return true;
-    } catch {
-      return false;
+  async subscribe(
+    newSubscribeDTO: NewSubscribeDTO
+  ): Promise<void> {
+    await this.weatherManager.getCurrentWeather(newSubscribeDTO.city);
+    const subEntity = this.repo.create({
+      email:      newSubscribeDTO.email,
+      city:       newSubscribeDTO.city,
+      frequency:  newSubscribeDTO.frequency,
+    });
+    const newSub = await this.repo.save(subEntity);
+
+    if (!newSub) {
+      throw new ConflictException('Email already subscribed');
     }
+
+    await this.emailManager.sendConfirmation(
+      newSub.email,
+      newSub.id
+    );
   }
 
   // MARK: - Confirm
-  async confirmSubscription(token: string): Promise<boolean> {
-    return true;
+  async confirmSubscription(
+    token: string
+  ): Promise<boolean> {
+    return await this.repo.setConfirm(token, true);
   }
 
   // MARK: - Unsubscribe
   async unsubscribe(token: string): Promise<boolean> {
-    return true;
+    return await this.repo.setConfirm(token, false);
   }
 }
