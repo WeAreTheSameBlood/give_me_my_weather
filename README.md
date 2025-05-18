@@ -22,6 +22,7 @@
 - **Email Delivery**: SendGrid (via @sendgrid/mail)
 - **Containerization**: Docker (Docker Compose)
 - **Configuration**: @nestjs/config
+- **HTTP-test**: Postman --> [download test collection](https://drive.google.com/file/d/1HVzV_aX5xsV1VuIOX8W_aTLQTWiRygeA/view?usp=sharing)
 
 ## API Endpoints
 
