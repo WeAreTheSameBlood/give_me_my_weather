@@ -42,7 +42,8 @@
 ### Subscription Management
 
 - **POST** `/api/subscribe`  
-  Subscribe an email to weather updates.  
+  Subscribe an email to weather updates.
+  > **Important:** <span style="color:red">Please be sure to check your spam or junk folders, as emails sent via a free-tier service may often land there due to lower delivery priority.</span>
   **Body (application/json)**:
   ```json
   {
@@ -68,6 +69,8 @@
 
 - **GET** `/api/subscribe` -->
   [Subscription Page link](https://give-me-my-weather.onrender.com/api/subscribe)
+  
+  > **Important:** <span style="color:red">Please be sure to check your spam or junk folders, as emails sent via a free-tier service may often land there due to lower delivery priority.</span>
   
   Minimalist HTML page for subscribing via browser.
 
