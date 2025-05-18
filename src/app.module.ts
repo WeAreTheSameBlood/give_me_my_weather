@@ -4,8 +4,9 @@ import { SubscriptionModule } from '@modules/subscriptions/subscription.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SchedulerModule } from '@services';
+import { HealthModule } from './modules/health/health.module';
 
-const featuresModules = [WeatherModule, SubscriptionModule];
+const featuresModules = [WeatherModule, SubscriptionModule, HealthModule];
 const internalModules = [SchedulerModule];
 
 @Module({
