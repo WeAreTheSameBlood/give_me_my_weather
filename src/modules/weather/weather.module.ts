@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WeatherController } from './controllers/weather.controller';
 import { WeatherService } from './services/weather.service';
-import { WeatherManagerModule } from '@common/services/weather/weather-manager.module';
+import { WeatherManagerModule } from '@services';
 
 @Module({
   imports: [WeatherManagerModule],

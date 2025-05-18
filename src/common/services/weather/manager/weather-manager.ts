@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { CurrentWeather } from '../entities/domain/current-weather';
+import { Subscription } from '@src/modules/subscriptions/entities/storage/subscription';
 
 @Injectable()
 export class WeatherManager {
@@ -25,8 +26,22 @@ export class WeatherManager {
     this.baseUrl =  this.config.get<string>('WEATHER_API_BASE_URL')!;
   }
 
-  // MARK: - Current Weather
-  async getCurrentWeather(city: string): Promise<CurrentWeather> {
+  // MARK: - Current Weathers
+  async getCurrentWeathers(
+    subs: Subscription[],
+  ): Promise<{
+    sub: Subscription;
+    weather: CurrentWeather
+  }[]> {
+    const tasks = subs.map(async (sub) => {
+      const weather = await this.getOneCurrentWeather(sub.city);
+      return { sub, weather };
+    });
+    return Promise.all(tasks);
+  }
+
+  // MARK: - Current One Weather
+  async getOneCurrentWeather(city: string): Promise<CurrentWeather> {
     const resultUrl = this.baseUrl + this.currentUrl;
     const params = {
       key: this.apiKey,

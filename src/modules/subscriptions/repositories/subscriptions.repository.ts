@@ -2,6 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Subscription } from "../entities/storage/subscription";
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
+import { Frequency } from "@common/entities/domain/frequency.enum";
 
 @Injectable()
 export class SubscriptionsRepository {
@@ -12,8 +13,13 @@ export class SubscriptionsRepository {
   ) {}
 
   // Crete
-  create(sub: Partial<Subscription>): Subscription {
-    return this.repo.create(sub);
+  async create(
+    sub: Partial<Subscription>
+  ): Promise<Subscription | null> {
+    const existing = await this.repo.findOne({ where: { email: sub.email } });
+    if (existing) return null;
+    const entity = this.repo.create(sub);
+    return await this.repo.save(entity);
   }
 
   // Save
@@ -25,15 +31,15 @@ export class SubscriptionsRepository {
   async setConfirm(
     subId: string,
     isConfirm: boolean
-  ): Promise<boolean> { 
-    const sub = await this.repo.findOne({ where: { id: subId } })
+  ): Promise<boolean> {
+    const sub = await this.repo.findOne({ where: { id: subId } });
     if (sub) {
-      sub.confirmed = isConfirm
+      sub.confirmed = isConfirm;
       this.save(sub);
-      return true
+      return true;
     }
 
-    return false
+    return false;
   }
 
   // Delete by ID
@@ -43,5 +49,10 @@ export class SubscriptionsRepository {
       return result.affected > 0;
     }
     return false;
+  }
+
+  // Find by Frequency
+  async findByFrequency(type: Frequency): Promise<Subscription[]> {
+    return this.repo.find({ where: { frequency: type, confirmed: true } });
   }
 }

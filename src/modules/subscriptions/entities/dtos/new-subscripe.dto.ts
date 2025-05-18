@@ -1,3 +1,4 @@
+import { Frequency } from "@common/entities/domain/frequency.enum";
 import { IsIn, IsString } from "class-validator";
 
 export class NewSubscribeDTO {
@@ -8,6 +9,6 @@ export class NewSubscribeDTO {
   city: string;
 
   @IsString()
-  @IsIn(['hourly', 'daily'])
+  @IsIn([Frequency.HOURLY, Frequency.DAILY])
   frequency: string;
 }

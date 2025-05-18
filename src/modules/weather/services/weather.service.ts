@@ -10,6 +10,6 @@ export class WeatherService {
 
   // MARK: - Current Weather
   async getCurrentWeather(city: string) {
-    return await this.weatherManager.getCurrentWeather(city);
+    return await this.weatherManager.getOneCurrentWeather(city);
   }
 }

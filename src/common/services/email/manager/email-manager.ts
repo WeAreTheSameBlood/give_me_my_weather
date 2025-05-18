@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
-import { CurrentWeather } from '../../weather/entities/domain/current-weather';
+import { CurrentWeather } from "@common/services/weather/entities/domain/current-weather"
+import { Subscription } from '@modules/subscriptions/entities/storage/subscription';
 
 @Injectable()
 export class EmailManager {
@@ -30,18 +31,17 @@ export class EmailManager {
       <p>If the button does not work, copy and paste the following link into your browser:<br/>
         <a href="${link}">${link}</a>
       </p>
+      <p>This is a reusable link</p>
     `;
 
     try {
       const [response] = await SendGrid.send({
         to: email,
         from: this.fromAddress,
-        subject: 'Підтвердження підписки на оновлення погоди',
+        subject: 'Confirmation of subscription to weather updates',
         html,
       });
-      console.log('SendGrid response:', response);
     } catch (err) {
-      console.error('SendGrid error:', err);
       throw new HttpException(
         'Cannot send confirmation email',
         HttpStatus.BAD_GATEWAY,
@@ -51,10 +51,10 @@ export class EmailManager {
 
   // MARK: - Send Current
   async sendCurrentWeather(
-    items: { email: string; weather: CurrentWeather }[],
+    items: { sub: Subscription; weather: CurrentWeather }[],
   ) {
-    const tasks = items.map(({ email, weather }) =>
-      this.sendCurrentWeatherToEmail(email, weather),
+    const tasks = items.map(({ sub, weather }) =>
+      this.sendCurrentWeatherToEmail(sub, weather),
     );
 
     Promise.all(tasks);
@@ -62,9 +62,10 @@ export class EmailManager {
 
   // MARK: - Private
   private async sendCurrentWeatherToEmail(
-    email: string,
+    sub: Subscription,
     weather: CurrentWeather,
   ) {
+    const unsubLink = `${this.confirmBaseUrl}/unsubscribe/${sub.id}`;
     const html = `
       <h2>Current Weather Update</h2>
       <ul>
@@ -72,11 +73,19 @@ export class EmailManager {
         <li>Humidity:     ${weather.humidity}%</li>
         <li>Description:  ${weather.description}</li>
       </ul>
+      <p style="margin-top:20px;">
+        <a href="${unsubLink}" style="color:#888888; text-decoration:none; font-size:12px;">
+          Unsubscribe
+        </a>
+        <p>If the button does not work, copy and paste the following link into your browser:<br/>
+          <a href="${unsubLink}">${unsubLink}</a>
+        </p>
+      </p>
       <p>Thank you for using our service!</p>
     `;
     try {
       const [response] = await SendGrid.send({
-        to: email,
+        to: sub.email,
         from: this.fromAddress,
         subject: `Current Weather for U <3`,
         html,

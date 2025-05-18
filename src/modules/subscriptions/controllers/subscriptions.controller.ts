@@ -47,6 +47,8 @@ export class SubscriptionsController {
     if (!result) {
       throw new BadRequestException('Invalid token');
     }
+
+    console.log('confirmSubscription for', {token});
   }
 
   // MARK: - GET - Unsubscribe
