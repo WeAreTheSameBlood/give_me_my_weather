@@ -23,6 +23,7 @@
 - **Containerization**: Docker (Docker Compose)
 - **Configuration**: @nestjs/config
 - **HTTP-test**: Postman --> [download test collection](https://drive.google.com/file/d/1HVzV_aX5xsV1VuIOX8W_aTLQTWiRygeA/view?usp=sharing)
+- **Deploy platfom**: [Render](https://render.com)
 
 ## API Endpoints
 
@@ -44,7 +45,7 @@
 
 - **POST** `/api/subscribe`  
   Subscribe an email to weather updates.
-  > **Important:** <span style="color:red">Please be sure to check your spam or junk folders, as emails sent via a free-tier service may often land there due to lower delivery priority.</span>
+  > **Important:** <span style="color:red">Please be sure to check your spam or junk folders, as emails sent via a free-tier service may often land there due to lower delivery priority. Links in emails are reusable, so you can flexibly manage your subscription</span>
   **Body (application/json)**:
   ```json
   {
@@ -71,7 +72,7 @@
 - **GET** `/api/subscribe` -->
   [Subscription Page link](https://give-me-my-weather.onrender.com/api/subscribe)
   
-  > **Important:** <span style="color:red">Please be sure to check your spam or junk folders, as emails sent via a free-tier service may often land there due to lower delivery priority.</span>
+  > **Important:** <span style="color:red">Please be sure to check your spam or junk folders, as emails sent via a free-tier service may often land there due to lower delivery priority. Links in emails are reusable, so you can flexibly manage your subscription</span>
   
   Minimalist HTML page for subscribing via browser.
 
@@ -84,4 +85,4 @@ Ensure you configure `SENDGRID_API_KEY`, `EMAIL_FROM`, and `APP_CONFIRM_URL` in 
 ## Deployment & Health Check
 
 - **Hosting**: The server is deployed on [Render](https://render.com) (Free Tier).
-- **Health Endpoint**: A `GET /health` endpoint is called periodically to keep the server awake and prevent it from sleeping under Render’s Free Tier limit.
+- **Health Endpoint**: A `GET /health` endpoint is autocalled periodically to keep the server awake and prevent it from sleeping under Render’s Free Tier limit
