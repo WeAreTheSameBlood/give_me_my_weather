@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Weather Subscription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 50px;
+        }
+
+        h1 { margin-bottom: 20px; }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 320px;
+        }
+
+        input, select, button {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #success {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d0f0c0;
+            color: #2e7d32;
+            border-radius: 4px;
+            width: 320px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Weather Subscription</h1>
+
+    <div id="form-container">
+        <form id="subForm">
+            <input type="email" id="email" placeholder="Email" required />
+            
+            <input type="text" id="city" placeholder="City" required />
+            
+            <select id="frequency" required>
+                <option value="daily">Daily</option>
+                <option value="hourly">Hourly</option>
+            </select>
+
+            <button type="submit">Subscribe</button>
+        </form>
+    </div>
+
+    <div id="success">Subscription successful! Reloading...</div>
+
+    <script>
+        const form = document.getElementById('subForm');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const autorealoadTime = 5000;
+
+            const email =       document.getElementById('email').value;
+            const city =        document.getElementById('city').value;
+            const frequency =   document.getElementById('frequency').value;
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        { email, city, frequency }
+                    ),
+                });
+
+                if (response.status === 200) {
+                    document.getElementById('form-container').style.display = 'none';
+                    const successEl = document.getElementById('success');
+                    successEl.style.display = 'block';
+                    
+                    setTimeout(
+                        () => window.location.reload(), 
+                        autorealoadTime
+                    );
+                } else {
+                    const error = await response.text();
+                    alert('Subscription failed: ' + (error || response.statusText));
+                }
+            } catch (error) {
+                alert('Request error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

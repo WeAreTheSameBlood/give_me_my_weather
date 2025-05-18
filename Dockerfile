@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci
@@ -9,4 +9,6 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npm", "run", "start"]
+COPY src/modules/subscriptions/templates/ dist/modules/subscriptions/templates/
+
+CMD ["node", "dist/main"]
