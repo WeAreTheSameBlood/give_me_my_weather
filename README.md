@@ -37,7 +37,7 @@
     "description": "Kyiv, Kyyivs'ka Oblast', Ukraine, local time: 2025-05-18 15:21"
   }
   ```
-  **Errors**: 400 (invalid request), 404 (city not found)
+  **Errors**: 400 (Invalid request), 404 (City not found)
 
 ### Subscription Management
 
@@ -66,8 +66,10 @@
 
 ### Web Subscription Page
 
-- **GET** `/api/subscribe`  
-  Serves a minimalist HTML page for subscribing via browser.
+- **GET** `/api/subscribe` -->
+  [Subscription Page link](https://give-me-my-weather.onrender.com/api/subscribe)
+  
+  Minimalist HTML page for subscribing via browser.
 
 ## Email Service
 
